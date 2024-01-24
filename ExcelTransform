@@ -1,0 +1,11 @@
+(mFile, FileName, Createdt,msheet,skiprow) =>
+let
+    Source = Excel.Workbook(mFile,false),
+    Cur = Source{[Item=msheet, Kind="Sheet"]}[Data],
+    remove_row = Table.Skip(Cur,skiprow),
+    PromoteMe = Table.PromoteHeaders(remove_row, [PromoteAllScalars=true]),
+    add_name = Table.AddColumn(PromoteMe, "FileName", each FileName),
+    add_crdt = Table.AddColumn(add_name, "Date created", each Createdt)
+  
+in
+    add_crdt
