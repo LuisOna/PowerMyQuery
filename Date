@@ -1,0 +1,19 @@
+let
+    Source = Oracle.Database("BPCDWP.WORLD", [HierarchicalNavigation=true]),
+    ONAL = Source{[Schema="ONAL"]}[Data],
+    V_DO_PLAN1 = ONAL{[Name="V_B2B_DATES"]}[Data],
+    #"Changed Type" = Table.TransformColumnTypes(V_DO_PLAN1,{{"DATE", type date}, {"LAST_DAY_QTR", type date}, {"LAST_DAY", type date}, {"START_DAY", type date}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{  {"PERIOD", "Period"},                                   {"MONTH", "Calendar Month"},                        {"YEAR", "Calendar Year"}, 
+                                                                {"QTR", "Calendar Qtr"},                                {"FISCAL", "Fiscal"},                               {"FISCAL_QTR", "Fiscal Qtr number"}, 
+                                                                {"MONTH_TEXT", "Month Name"},                           {"DAY_OF_WEEK", "Day of Week"},                     {"WEEK", "Week Num"},  
+                                                                {"PERIOD_MONTH", "Period and Month"},                   {"LAST_DAY", "Last Day of Month"},                  {"LAST_DAY_QTR", "Last Day of Qtr"}, 
+                                                                {"HALF", "Fiscal Half  number"},                        {"START_DAY", "Start of Month"},                    {"QF", "Qtr and Fiscal"},   
+                                                                {"FQ", "Fiscal and Qtr"},                               {"MF", "Month and Fiscal"},                         {"START_WEEK", "Start of Week"},  
+                                                                {"DAY", "Day"},                                         {"CALENDAR_MONTH", "Calendar and Month (YYYY-MM)"}, {"CALENDAR_QTR", "Calendar and Qtr (CY-Q)"}, 
+                                                                {"CALENDAR_MONTH_NUM", "Calendar and Month (YYMM)"},    {"DFISCAL_QTR", "Fiscal Qtr"},                      {"DFISCAL_HALF", "Fiscal Half"},
+                                                                {"MONTH_TEXT_SHORT", "Month Short Text"},               {"FORECAST_PERIOD", "Forecast Period"},             {"CURRENT_MONTH", "Active Month"},
+                                                                {"DBCUTOFF","Day before SAB Cutoff"},                   {"SNA_DAY","Day based on SNA Daily Report"},
+                                                                {"SNA_MONTH_CALENDAR","SNA Daily Year & Month"}})
+                                                                
+in
+    #"Renamed Columns"
