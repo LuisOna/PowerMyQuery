@@ -1,0 +1,14 @@
+let
+    Source = DateTimeZone.LocalNow(),
+    #"Converted to Table" = #table(1, {{Source}}),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Converted to Table", "Column1", "Column1 - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"Column1", "DateTime UTC"}}),
+    #"Duplicated Column1" = Table.DuplicateColumn(#"Renamed Columns", "DateTime UTC", "DateTime - Copy"),
+    #"Renamed Columns1" = Table.RenameColumns(#"Duplicated Column1",{{"Column1 - Copy", "Date"}, {"DateTime - Copy", "Time"}}),
+    #"Extracted Time" = Table.TransformColumns(#"Renamed Columns1",{{"Time", DateTime.Time, type time}}),
+    #"Extracted Date" = Table.TransformColumns(#"Extracted Time",{{"Date", DateTime.Date, type date}}),
+    #"Added Custom" = Table.AddColumn(#"Extracted Date", "NY", each DateTimeZone.SwitchZone([DateTime UTC],-5)),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom", "CA", each DateTimeZone.SwitchZone([DateTime UTC],-8)),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom2",{{"CA", type datetimezone}, {"DateTime UTC", type datetimezone}, {"NY", type datetimezone}})
+in
+    #"Changed Type"
